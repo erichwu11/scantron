@@ -19,4 +19,4 @@ def main():
 
 if __name__ == "__main__":
     # main()  # Call the main function
-    print(read("scanned.jpg", 15))
+    print(read("./test/scanned.jpg", 15))
