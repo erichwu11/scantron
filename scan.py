@@ -1,6 +1,7 @@
 import cv2
 import cv2.aruco as aruco
 import numpy as np
+import pandas as pd
 
 def read(image_path, questions):
     # Load the image
@@ -31,7 +32,7 @@ def read(image_path, questions):
         vote = 0
         move_x = [0, 0, 0, -3, -3, -3, 3, 3, 3, 0, -5, 5, 0]
         move_y = [0, -3, 3, 0, -3, 3, 0, -3, 3, -5, 0, 0, 5]
-        cope = img.copy()
+        # cope = img.copy()
         for i in range(len(move_x)):
             temp_x, temp_y = map_to_original(x + move_x[i], y + move_y[i])
             if 0 <= temp_x < img.shape[1] and 0 <= temp_y < img.shape[0]:
@@ -39,7 +40,7 @@ def read(image_path, questions):
                     vote += 1
                 else:
                     vote -= 1
-                cope[temp_y, temp_x] = 0
+                # cope[temp_y, temp_x] = 0
         # cv2.imshow('bbb', cope)
         # cv2.waitKey(0)
         # cv2.destroyAllWindows()
@@ -69,8 +70,9 @@ def read(image_path, questions):
 
     ids = ids.flatten()
     corners = [tuple(map(int, x[0][0])) for x in corners]
-    assert len(ids) == 4
-
+    # assert len(ids) == 4
+    if len(ids) != 4:
+        return f"Found {len(ids)} aruco markers"
 
     for i, marker_id in enumerate(ids):
         if marker_id == top_left_id:
@@ -115,8 +117,9 @@ def read(image_path, questions):
         if len(cur) == 1:
             stud_id.append(cur[0])
         elif col < 8:
-            print("error at student id", col, cur, stud_id)
+            # print("error at student id", col, cur, stud_id)
             # assert 0
+            return f"Student ID error Column: {col}, Scanned: {' '.join(map(str, cur))}"
 
     # if id starts with x, tell them to go for random number other than 1
     if stud_id[0] != 1:
@@ -136,3 +139,53 @@ def read(image_path, questions):
         stud_ans.append(cur)
 
     return stud_id, stud_ans
+
+def read_csv(image_path):
+    # Read the CSV file using pandas
+    def error_handle(msg, index):
+        print(f"row {index} error:" + msg)
+        exit(1)
+
+    df = pd.read_csv(image_path, dtype={"Answers": "string", "Choices": int, "Points": int})
+    ans = []
+    choices = []
+    points = []
+    total_row = 0
+    
+    for index, row in df.iterrows():
+        # print(f"Row {index}: {row}")
+        if row['Choices'] == 1:
+            if len(row['Answers']) != 1: # Single choice questions
+                error_handle("answer length should be 1", index)
+            ans.append(int(row['Answers']))
+            choices.append(row['Choices'])
+            points.append(row['Points'])
+            total_row += 1
+        elif row['Choices'] > 1: # Multi choices questiongs
+            if len(row['Answers']) > row['Choices']:
+                error_handle("answers more than choices", index)
+            ans.append([int(x) for x in row['Answers']])
+            choices.append(row['Choices'])
+            points.append(row['Points'])
+            total_row += 1
+        elif row['Choices'] < 0:
+            if len(row['Answers']) != -row['Choices']:
+                error_handle("answers length doesnt equal to given columns(Choices)", index)
+            for i in range(-row['Choices']):
+                ans.append(int(row['Answers'][i]))
+                if i == 0:
+                    choices.append(row['Choices'])
+                    points.append(row['Points'])
+                else:
+                    choices.append(0)
+                    points.append(0)
+            total_row += -row['Choices']
+        else:
+            error_handle("choices incorrect", index)
+    
+    # Final check
+    assert isinstance(ans, list)
+    assert isinstance(points, list) and all(isinstance(i, int) for i in points)
+    assert isinstance(choices, list) and all(isinstance(i, int) for i in choices)
+        
+    return ans, choices, points, total_row

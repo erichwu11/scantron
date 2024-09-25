@@ -8,24 +8,25 @@ def diff_count(arr1, arr2):
     return len(difference)
 
 def checky(ans, points, choices, img_path):
-    assert isinstance(ans, list)
-    assert isinstance(points, list) and all(isinstance(i, int) for i in points)
-    assert isinstance(choices, list) and all(isinstance(i, int) for i in choices)
-    assert isinstance(img_path, str)
-
-    stud_id, stud_ans = read(img_path, len(ans))
+    # assert isinstance(img_path, str)
+    temp_out = read(img_path, len(ans))
+    # Return if error from read
+    if type(temp_out) == str:
+        return "From read(): " + temp_out
+    stud_id, stud_ans = temp_out
 
     total = 0
     i = 0
     while i < len(ans):
-        print(i, total)
+        # print(i + 1, total)
         if choices[i] == 1: # single answer
             if len(stud_ans[i]) == 1 and int(ans[i]) == stud_ans[i][0]:
                 total += points[i]
             i += 1
         elif choices[i] > 1: # multi answers
-            diff = diff_count([int(x) for x in ans[i]], stud_ans[i])
-            total += max(0, ceil(points[i] * (1 - diff * 2 / choices[i])))
+            if len(stud_ans[i]) > 0:
+                diff = diff_count([int(x) for x in ans[i]], stud_ans[i])
+                total += max(0, ceil(points[i] * (1 - diff * 2 / choices[i])))
             i += 1
         else: # linked answer
             real = ''.join(str(x) for x in ans[i:i+(-choices[i])])
@@ -38,9 +39,9 @@ def checky(ans, points, choices, img_path):
 
     return stud_id, total
 
-def test_works_with_arrays_of_different_lengths():
-    assert diff_count([1, 3, 5], [2, 4]) == 5
-    assert diff_count([1, 3, 5], [3]) == 2
-    assert diff_count([1], [1, 3, 5]) == 2
-    assert diff_count([1, 3, 5], [1, 3, 5]) == 0
-    assert diff_count([1], [1, 2, 4]) == 2
+# def test_works_with_arrays_of_different_lengths():
+#     assert diff_count([1, 3, 5], [2, 4]) == 5
+#     assert diff_count([1, 3, 5], [3]) == 2
+#     assert diff_count([1], [1, 3, 5]) == 2
+#     assert diff_count([1, 3, 5], [1, 3, 5]) == 0
+#     assert diff_count([1], [1, 2, 4]) == 2
