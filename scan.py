@@ -2,6 +2,7 @@ import cv2
 import cv2.aruco as aruco
 import numpy as np
 import pandas as pd
+from PIL import Image
 
 def read(image_path, questions):
     # Load the image
@@ -11,7 +12,7 @@ def read(image_path, questions):
     top_left_id = 0
     top_right_id = 1
     bottom_left_id = 2
-    bottom_right_id = 3
+    bottom_right_id = 7
 
     original_x = 320 + 30 * questions - 10
     original_y = 370 - 10
@@ -64,6 +65,9 @@ def read(image_path, questions):
     # else:
     #     image_with_markers = gray.copy()
     #     print("No markers detected")
+
+    # new_size = (int(image_with_markers.shape[1] * 0.3), int(image_with_markers.shape[0] * 0.3))
+    # image_with_markers = cv2.resize(image_with_markers, new_size)
     # cv2.imshow('Detected ArUco Markers', image_with_markers)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()

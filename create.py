@@ -45,7 +45,7 @@ for col in range(questions):
 mark0 = Image.fromarray(generate_marker(0))
 mark1 = Image.fromarray(generate_marker(1))
 mark2 = Image.fromarray(generate_marker(2))
-mark3 = Image.fromarray(generate_marker(3))
+mark3 = Image.fromarray(generate_marker(7))
 
 img.paste(mark0, (10, 10))
 img.paste(mark1, (320 + 30 * questions, 10))
@@ -56,5 +56,5 @@ img.paste(mark3, (320 + 30 * questions, 370))
 # img_resized = img.resize(new_size, Image.LANCZOS)
 
 # Save the image
-img.save("lol.png")
+img.save("bro.png")
 # img_resized.save("lol.png")

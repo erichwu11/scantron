@@ -16,7 +16,7 @@ def main():
     # choices = [1, 1, 1, 1, -2, 0, -2, 0, -2, 0,
     #             2, 3, 6, 1, 1, 1, -4, 0, 0, 0]
     ans, choices, points, _ = read_csv("read.csv")
-    print(checky(ans, points, choices, "test/cutted.jpg"))
+    print(checky(ans, points, choices, "test/setA/1000041661.jpg"))
 
 if __name__ == "__main__":
     main()  # Call the main function
