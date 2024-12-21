@@ -1,8 +1,9 @@
-import cv2
 import cv2.aruco as aruco
 from PIL import Image, ImageDraw, ImageFont
 
-questions = 15
+# Constants
+questions = 17
+img_name = "exam.png"
 
 # Generate ArUco marker images
 def generate_marker(id, size=30):
@@ -56,5 +57,5 @@ img.paste(mark3, (320 + 30 * questions, 370))
 # img_resized = img.resize(new_size, Image.LANCZOS)
 
 # Save the image
-img.save("bro.png")
+img.save(img_name)
 # img_resized.save("lol.png")
